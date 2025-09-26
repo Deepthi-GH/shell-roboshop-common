@@ -4,7 +4,7 @@ source ./common-code.sh
 
 CHECK_ROOT
 
-cp SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
 VALIDATE $? "adding mongorepo"
 
 dnf install mongodb-org -y &>>$LOG_FILE
