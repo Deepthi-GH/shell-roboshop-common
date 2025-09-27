@@ -50,6 +50,40 @@ NODEJS_SETUP()
     
 }
 
+MAVEN_SETUP()
+{   
+    dnf install maven -y &>>$LOG_FILE
+    VALIDATE $? "installing maven"
+    cd /app 
+    mvn clean package &>>$LOG_FILE
+    VALIDATE $? "clean package"
+ 
+    mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
+    VALIDATE $? "moving jar file"
+ 
+}
+
+PYTHON_SETUP()
+{
+    dnf install python3 gcc python3-devel -y &>>$LOG_FILE
+    VALIDATE $? "installing python"
+    cd /app 
+    pip3 install -r requirements.txt
+}
+
+GOLANG_SETUP()  
+{
+    dnf install golang -y &>>$LOG_FILE
+    VALIDATE $? "installing go-lang"
+    cd /app 
+    go mod init dispatch &>>$LOG_FILE
+    VALIDATE $? "initializing dispatch"
+    go get  &>>$LOG_FILE
+    VALIDATE $? "go get"
+    go build &>>$LOG_FILE
+    VALIDATE $? "cgo build"
+}
+
 APP_SETUP()
 {
    id roboshop &>>$LOG_FILE
@@ -75,11 +109,10 @@ APP_SETUP()
     unzip /tmp/$app_name.zip &>>$LOG_FILE
     VALIDATE $? "unzipping the code"
 
-}    
-
+}  
 SYSTEMD_SETUP()
 {   
-    cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE
+    cp $SCRIPT_DIR/$app_name.service /etc/systemd/system/$app_name.service &>>$LOG_FILE
     VALIDATE $? "copy systemctl file"
     systemctl daemon-reload
     systemctl enable $app_name 
